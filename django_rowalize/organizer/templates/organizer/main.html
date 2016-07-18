@@ -1,0 +1,36 @@
+{% extends "website-base.html" %}
+
+{% block bar %}
+{% include "menubar.html" with rower=rower crews=crews %}
+{% endblock %}
+
+{% block main %}
+<div class="container-fluid">
+    <div class="row">
+        {% for crew in crews %}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+            <h2>{{ crew.name }} </h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>RSVPs</th>
+                    <th>Time</th>
+                    <th>Confirmed</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for event in crew.event_set.all %}
+                <tr>
+                    <th scope="row">{{event.members.count}}</th>
+                    <td>{{event.starting_time}}</td>
+                    <td>{{event.is_confirmed}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-default" href="/organizer/crew/{{crew.name}}" role="button">Go to Group</a>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

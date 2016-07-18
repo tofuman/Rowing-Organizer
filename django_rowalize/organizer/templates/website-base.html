@@ -1,0 +1,25 @@
+{# Load the tag library #}
+{% load bootstrap3 %}
+
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+
+
+
+
+<html>
+    <head>
+        <title> Champs Rowing</title>
+    </head>
+
+    {% block bar %}
+    {% endblock bar %}
+
+    {# Display django.contrib.messages as Bootstrap alerts #}
+    {% bootstrap_messages %}
+
+    <body>
+    {% block main %}{% endblock main %}
+    </body>
+</html>
