@@ -85,8 +85,10 @@ class Event(models.Model):
 
 
 
-
-
+class BoatClub(models.Model):
+    name = models.CharField(max_length=50, unique=True, primary_key=True)
+    nickname = models.CharField(max_length=15, unique=True, primary_key=True)
+    location = models.CharField(max_length=30, unique=True, primary_key=True)
 
 
 

@@ -31,6 +31,12 @@ def logout_user(request):
     return render_to_response('organizer/login.html', context_instance=RequestContext(request))
 
 
+def createuser(request):
+    logout(request)
+    return render(request, 'organizer/usercreation.html',
+                  {'boatclub'})
+
+
 @login_required(login_url='/organizer/login/')
 def main(request):
     rower = get_object_or_404(Rower, pk=request.user)
