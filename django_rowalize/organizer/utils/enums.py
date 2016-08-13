@@ -1,9 +1,13 @@
 
 GENDER_MALE = 'm'
 GENDER_FEMALE = 'f'
+GENDER_UNICORN = 'u'
+GENDER_OTHER = 'o'
 GENDER_CHOICES = (
     (GENDER_MALE, 'Male'),
     (GENDER_FEMALE, 'Female'),
+    (GENDER_UNICORN, 'Unicorn'),
+    (GENDER_OTHER, 'Other')
 )
 
 BOAT_SWEEP = 'w'

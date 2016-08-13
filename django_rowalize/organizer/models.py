@@ -5,6 +5,7 @@ from .utils.enums import GENDER_CHOICES, BOAT_CHOICES, LOCATION_CHOICES, SIDE_CH
 
 class Rower(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length=40, null=False, blank=False, default='John Doe')
     phone_number = models.CharField(max_length=20, blank=True) # TODO !!!
     preferred_side = models.CharField(max_length=2, choices=SIDE_CHOICES)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
@@ -75,6 +76,7 @@ class Event(models.Model):
     coxBox = models.ForeignKey(CoxBox, null=True, blank=True)
     isRace = models.BooleanField(default=False)
     is_confirmed = models.BooleanField(default=False)
+    is_canceled = models.BooleanField(default=False)
 
 
     def __str__(self):
@@ -87,8 +89,8 @@ class Event(models.Model):
 
 class BoatClub(models.Model):
     name = models.CharField(max_length=50, unique=True, primary_key=True)
-    nickname = models.CharField(max_length=15, unique=True, primary_key=True)
-    location = models.CharField(max_length=30, unique=True, primary_key=True)
+    nickname = models.CharField(max_length=15, unique=True)
+    location = models.CharField(max_length=30, unique=True)
 
 
 

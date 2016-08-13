@@ -8,8 +8,10 @@ from django.template import RequestContext
 
 
 from .models import Crew, Rower, Event
+from .utils.enums import SIDE_CHOICES, GENDER_CHOICES
 # Create your views here.
 
+import logging
 
 def login_user(request):
     logout(request)
@@ -17,7 +19,6 @@ def login_user(request):
     if request.POST:
         username = request.POST['username']
         password = request.POST['password']
-
         user = authenticate(username=username, password=password)
         if user is not None:
             if user.is_active:
@@ -34,16 +35,15 @@ def logout_user(request):
 def createuser(request):
     logout(request)
     return render(request, 'organizer/usercreation.html',
-                  {'boatclub'})
+                  {'boatclub':{'name':'Champion on the Thames'},
+                   'sides':SIDE_CHOICES,
+                   'genders': GENDER_CHOICES})
 
 
 @login_required(login_url='/organizer/login/')
 def main(request):
     rower = get_object_or_404(Rower, pk=request.user)
     crews = rower.member_of_crew.all()
-
-    print("EHLO")
-
 
     return render(request, 'organizer/main.html', {
             'rower': rower,

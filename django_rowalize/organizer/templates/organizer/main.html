@@ -20,7 +20,13 @@
                 </thead>
                 <tbody>
                 {% for event in crew.event_set.all %}
+                {% if event.is_confirmed %}
+                <tr class="success">
+                {% elif event.is_canceled %}
+                <tr class="danger">
+                {% else %}
                 <tr>
+                {% endif %}
                     <th scope="row">{{event.members.count}}</th>
                     <td>{{event.starting_time}}</td>
                     <td>{{event.is_confirmed}}</td>
@@ -34,20 +40,28 @@
     </div>
     {% if rower.is_cox %}
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6" >
             <h2>Coxing</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>RSVPs</th>
+                    <th>Crew</th>
                     <th>Time</th>
                     <th>Confirmed</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for event in rower.coxing_in.all %}
+                {% if event.is_confirmed %}
+                <tr class="success">
+                {% elif event.is_canceled %}
+                <tr class="danger">
+                {% else %}
                 <tr>
+                {% endif %}
                     <th scope="row">{{event.members.count}}</th>
+                    <td>{{event.crew.name}}</td>
                     <td>{{event.starting_time}}</td>
                     <td>{{event.is_confirmed}}</td>
                 </tr>
@@ -59,23 +73,31 @@
     {% endif %}
     {% if rower.is_coach %}
     <div class="row">
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6" >
             <h2>Coaching</h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
                     <th>RSVPs</th>
+                    <th>Crew</th>
                     <th>Time</th>
                     <th>Confirmed</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for event in rower.coaching_in.all %}
-                <tr>
-                    <th scope="row">{{event.members.count}}</th>
-                    <td>{{event.starting_time}}</td>
-                    <td>{{event.is_confirmed}}</td>
-                </tr>
+                    {% if event.is_confirmed %}
+                    <tr class="success">
+                    {% elif event.is_canceled %}
+                    <tr class="danger">
+                    {% else %}
+                    <tr>
+                    {% endif %}
+                        <th scope="row">{{event.members.count}}</th>
+                        <td>{{event.crew.name}}</td>
+                        <td>{{event.starting_time}}</td>
+                        <td>{{event.is_confirmed}}</td>
+                    </tr>
                 {% endfor %}
                 </tbody>
             </table>
