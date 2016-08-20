@@ -11,6 +11,7 @@ from django.core.exceptions import ValidationError
 
 from .models import Crew, Rower, Event
 from .utils.enums import SIDE_CHOICES, GENDER_CHOICES
+from .forms import UserForm
 # Create your views here.
 
 import logging
@@ -37,32 +38,15 @@ def logout_user(request):
 def createuser(request):
     logout(request)
     if request.POST:
-        valid = True
-        username = request.POST['username']
-        password = request.POST['password']
-        retype = request.POST['retypepassword']
-        email = request.POST['email']
-        if username is None:
-            messages.error(request, "Username is required!")
-            valid = False
-        if password is not None or retype is not None or password != retype:
-            messages.error(request, "Passwords are required and must be the equal!")
-            valid = False
-        if email is not None:
-            messages.error(request, "Email address is required")
-            valid = False
-        else:
-            try:
-                validate_email(email)
-            except ValidationError:
-                messages.error(request, "Email Address is not valid")
-                valid = False
-
+        form = UserForm(request.POST)
+        if form.is_valid():
+            messages.info(request, "Your new User ("+ form.cleaned_data['username'] +") has been created! Please wait until a Administrator aproves the new user.")
+    else:
+        form = UserForm()
 
     return render(request, 'organizer/usercreation.html',
                   {'boatclub':{'name':'Champion on the Thames'},
-                   'sides':SIDE_CHOICES,
-                   'genders': GENDER_CHOICES})
+                   'form':form})
 
 
 @login_required(login_url='/organizer/login/')

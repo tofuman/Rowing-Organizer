@@ -7,7 +7,7 @@
 * django (>=1.9)
 * PostgreSQL (can easily be changed)
 * python3
-* django-bootstrap3 (tempted to drop)
+* django-bootstrap3
 
 ## Setup Instructions (DEBUGGING LOCALY ONLY)
 * Start PostgreSQL Server (check your Distro for instructions)
