@@ -4,12 +4,12 @@
 <div class="page-header">
     <div class="row">
         <div class="col-xs-12 col-md-8">
-            <h1>Create a User for {{boatclub.name}} outings</h1>
+            <h1>Create a {{formname}} for {{boatclub.name}} outings</h1>
         </div>
     </div>
 </div>
 
-{% include "formsnip.html" with form=form submit="Register"%}
+{% include "formsnip.html" with form=form submit=submit_name post_url=post_url %}
 
 
 {% endblock %}

@@ -10,5 +10,7 @@ urlpatterns = [
     url(r'^login/$', views.login_user),
     url(r'^logout/', views.logout_user),
     url(r'^createuser/', views.createuser),
+    url(r'^createouting/', views.createouting),
+    url(r'^', views.main)
 ]
 

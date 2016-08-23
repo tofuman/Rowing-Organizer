@@ -8,7 +8,7 @@
 <div class="container-fluid">
     <div class="row">
         {% for crew in crews %}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4" >
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
             <h2>{{ crew.name }} </h2>
             <table class="table table-striped">
                 <thead>
@@ -22,11 +22,11 @@
                 {% for event in crew.event_set.all %}
                 {% if event.is_confirmed %}
                 <tr class="success">
-                {% elif event.is_canceled %}
+                    {% elif event.is_canceled %}
                 <tr class="danger">
-                {% else %}
+                    {% else %}
                 <tr>
-                {% endif %}
+                    {% endif %}
                     <th scope="row">{{event.members.count}}</th>
                     <td>{{event.starting_time}}</td>
                     <td>{{event.is_confirmed}}</td>
@@ -40,7 +40,7 @@
     </div>
     {% if rower.is_cox %}
     <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6" >
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
             <h2>Coxing</h2>
             <table class="table table-striped">
                 <thead>
@@ -55,11 +55,11 @@
                 {% for event in rower.coxing_in.all %}
                 {% if event.is_confirmed %}
                 <tr class="success">
-                {% elif event.is_canceled %}
+                    {% elif event.is_canceled %}
                 <tr class="danger">
-                {% else %}
+                    {% else %}
                 <tr>
-                {% endif %}
+                    {% endif %}
                     <th scope="row">{{event.members.count}}</th>
                     <td>{{event.crew.name}}</td>
                     <td>{{event.starting_time}}</td>
@@ -73,8 +73,9 @@
     {% endif %}
     {% if rower.is_coach %}
     <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6" >
+        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
             <h2>Coaching</h2>
+
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -82,22 +83,28 @@
                     <th>Crew</th>
                     <th>Time</th>
                     <th>Confirmed</th>
+                    <th>Change State</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for event in rower.coaching_in.all %}
-                    {% if event.is_confirmed %}
-                    <tr class="success">
+                {% if event.is_confirmed %}
+                <tr class="success">
                     {% elif event.is_canceled %}
-                    <tr class="danger">
+                <tr class="danger">
                     {% else %}
-                    <tr>
+                <tr>
                     {% endif %}
-                        <th scope="row">{{event.members.count}}</th>
-                        <td>{{event.crew.name}}</td>
-                        <td>{{event.starting_time}}</td>
-                        <td>{{event.is_confirmed}}</td>
-                    </tr>
+                    <th scope="row">{{event.members.count}}</th>
+                    <td>{{event.crew.name}}</td>
+                    <td>{{event.starting_time}}</td>
+                    <td>{{event.is_confirmed}}</td>
+                    <td>
+                        <button type="button" class="btn btn-default" >
+                            Action <span class="caret"></span>
+                        </button>
+                    </td>
+                </tr>
                 {% endfor %}
                 </tbody>
             </table>
