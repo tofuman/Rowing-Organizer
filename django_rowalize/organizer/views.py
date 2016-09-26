@@ -61,7 +61,7 @@ def createuser(request):
         form = UserForm()
 
     return render(request, 'organizer/create.html',
-                  {'boatclub':{'name':'Champion on the Thames'},
+                  {'boatclub':{'name':'YOUR BOAT CLUB'},
                    'form':form,
                    'formname':"User",
                    'submit_name':"Register",
@@ -85,7 +85,7 @@ def createouting(request):
             messages.warning(request, "No Crew to Organize!")
             return redirect('/organizer/main')
     return render(request, 'organizer/create.html',
-                  {'boatclub':{'name':'Champion on the Thames'},
+                  {'boatclub':{'name':'YOUR BOAT CLUB'},
                    'form':form,
                    'rower':rower,
                    'formname':"Outing",
