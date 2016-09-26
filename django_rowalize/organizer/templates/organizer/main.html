@@ -3,113 +3,42 @@
 {% block bar %}
 {% include "menubar.html" with rower=rower crews=crews %}
 {% endblock %}
+<script>
+    function call_counter(url, pk) {
+        window.open(url);
+        $.get('YOUR_VIEW_HERE/'+pk+'/', function (data) {
+            alert("counter updated!");
+        });
+    }
+</script>
+
 
 {% block main %}
 <div class="container-fluid">
-    <div class="row">
-        {% for crew in crews %}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-            <h2>{{ crew.name }} </h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>RSVPs</th>
-                    <th>Time</th>
-                    <th>Confirmed</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for event in crew.event_set.all %}
-                {% if event.is_confirmed %}
-                <tr class="success">
-                    {% elif event.is_canceled %}
-                <tr class="danger">
-                    {% else %}
-                <tr>
-                    {% endif %}
-                    <th scope="row">{{event.members.count}}</th>
-                    <td>{{event.starting_time}}</td>
-                    <td>{{event.is_confirmed}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <a class="btn btn-default" href="/organizer/crew/{{crew.name}}" role="button">Go to Group</a>
+    {% if crews %}
+        <div class="page-header">
+            <h1>Rowing<small>Outings of Crews you row in.</small></h1>
         </div>
-        {% endfor %}
-    </div>
+        {% include "plotOutings.html" with rower=rower crews=crews cox=False coach=False org=False %}
+    {% endif %}
+
     {% if rower.is_cox %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
-            <h2>Coxing</h2>
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>RSVPs</th>
-                    <th>Crew</th>
-                    <th>Time</th>
-                    <th>Confirmed</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for event in rower.coxing_in.all %}
-                {% if event.is_confirmed %}
-                <tr class="success">
-                    {% elif event.is_canceled %}
-                <tr class="danger">
-                    {% else %}
-                <tr>
-                    {% endif %}
-                    <th scope="row">{{event.members.count}}</th>
-                    <td>{{event.crew.name}}</td>
-                    <td>{{event.starting_time}}</td>
-                    <td>{{event.is_confirmed}}</td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="page-header">
+            <h1>Coxing<small> Outings that you are Coxing or could Cox.</small></h1>
         </div>
-    </div>
+        {% include "plotOutings.html" with rower=rower crews=coxed_crews cox=True coach=False org=False %}
     {% endif %}
     {% if rower.is_coach %}
-    <div class="row">
-        <div class="col-xs-12 col-sm-8 col-md-6 col-lg-6">
-            <h2>Coaching</h2>
-
-            <table class="table table-striped">
-                <thead>
-                <tr>
-                    <th>RSVPs</th>
-                    <th>Crew</th>
-                    <th>Time</th>
-                    <th>Confirmed</th>
-                    <th>Change State</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for event in rower.coaching_in.all %}
-                {% if event.is_confirmed %}
-                <tr class="success">
-                    {% elif event.is_canceled %}
-                <tr class="danger">
-                    {% else %}
-                <tr>
-                    {% endif %}
-                    <th scope="row">{{event.members.count}}</th>
-                    <td>{{event.crew.name}}</td>
-                    <td>{{event.starting_time}}</td>
-                    <td>{{event.is_confirmed}}</td>
-                    <td>
-                        <button type="button" class="btn btn-default" >
-                            Action <span class="caret"></span>
-                        </button>
-                    </td>
-                </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+        <div class="page-header">
+            <h1>Coaching<small> Outings that you are Coaching or could Coach.</small></h1>
         </div>
-    </div>
+        {% include "plotOutings.html" with rower=rower crews=coach_crews cox=False coach=True org=False %}
+    {% endif %}
+    {% if organized_crews %}
+        <div class="page-header">
+            <h1>Organizing<small>Outings of crews that you manage.</small></h1>
+        </div>
+        {% include "plotOutings.html" with rower=rower crews=organized_crews cox=False coach=False org=True %}
     {% endif %}
 </div>
 {% endblock %}

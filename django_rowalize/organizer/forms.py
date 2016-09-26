@@ -1,6 +1,9 @@
 from django import forms
 from .utils.enums import GENDER_CHOICES, SIDE_CHOICES
 from .models import Event
+from datetimewidget.widgets import DateTimeWidget, DateWidget, TimeWidget
+from datetime import datetime
+from django.utils.timezone import get_current_timezone
 
 class UserForm(forms.Form):
     username = forms.CharField(label='Pick a username', max_length=100)
@@ -32,15 +35,54 @@ class UserForm(forms.Form):
         return self.cleaned_data
 
 class OutingForm(forms.ModelForm):
+    dateTimeOptions = {
+        'format': 'dd/mm/yy hh:ii',
+        'autoclose': True,
+        'minuteStep':'15',
+        'weekStart':'1',
+        'startDate' : str(datetime.now(get_current_timezone())),
+        'todayHighlight':True,
+        'pickerPosition':'bottom-left',
+        }
+
+
     class Meta:
         model = Event
         fields = [
             'starting_time',
             'ending_time',
             'boat',
-            'coaches',
             'crew',
-            'members',
             'oars',
-            'coxBox'
+            'coxBox',
+            'isRace',
+            'is_confirmed'
         ]
+    def __init__(self, *args, **kwargs):
+        super(OutingForm, self).__init__(*args, **kwargs)
+        self.fields['starting_time'] = forms.DateTimeField(widget=DateTimeWidget(usel10n=True,
+                                                                                 bootstrap_version=3,
+                                                                                 options=self.dateTimeOptions))
+        self.fields['ending_time'] = forms.DateTimeField(widget=DateTimeWidget(usel10n=True,
+                                                                               bootstrap_version=3,
+                                                                               options=self.dateTimeOptions))
+        self.fields['isRace'] = forms.BooleanField(label='This Outing is a Race', required=False)
+        self.fields['is_confirmed'] = forms.BooleanField(label='This outing is already confirmed', required=False)
+
+    def clean(self):
+        self.cleaned_data = super(OutingForm, self).clean()
+        try:
+            starting_time = self.cleaned_data.get('starting_time')
+            ending_time = self.cleaned_data.get('ending_time')
+        except ValueError:
+            raise forms.ValidationError("Time is Wrong!")
+        except TypeError:
+            print(self.cleaned_data.get('starting_time').split('+')[0])
+
+            raise forms.ValidationError("Start or End time was left empty")
+        if datetime.now(get_current_timezone()) >= starting_time or datetime.now(get_current_timezone())  >= ending_time:
+            raise forms.ValidationError("Time is in the past!")
+        if starting_time > ending_time:
+            raise forms.ValidationError("End Time is prior to Start Time!")
+
+        return self.cleaned_data

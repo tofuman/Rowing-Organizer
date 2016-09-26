@@ -8,6 +8,7 @@
 * PostgreSQL (can easily be changed)
 * python3
 * django-bootstrap3
+* django-datetime-widget https://github.com/asaglimbeni/django-datetime-widget
 
 ## Setup Instructions (DEBUGGING LOCALY ONLY)
 * Start PostgreSQL Server (check your Distro for instructions)

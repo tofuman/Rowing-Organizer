@@ -1,10 +1,17 @@
 {% extends "website-base.html" %}
+
+{% if bar %}
+    {% block bar %}
+    {% include "menubar.html" with rower=rower crews=crews %}
+    {% endblock %}
+{% endif %}
+
 {% block main %}
 
 <div class="page-header">
     <div class="row">
         <div class="col-xs-12 col-md-8">
-            <h1>Create a {{formname}} for {{boatclub.name}} outings</h1>
+            <h1>Create a {{formname}} for {{boatclub.name}}</h1>
         </div>
     </div>
 </div>

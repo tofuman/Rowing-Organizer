@@ -1,0 +1,66 @@
+{% load templateFilter %}
+
+<div class="row">
+        {% for crew in crews %}
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+            <h2>{{ crew.name }} </h2>
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>RSVPs</th>
+                    <th>Time</th>
+                    <th>Confirmed</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for event in crew.getEvents %}
+                {% if event.is_confirmed %}
+                <tr class="success">
+                    {% elif event.is_canceled %}
+                <tr class="danger">
+                    {% else %}
+                <tr>
+                    {% endif %}
+                    <th scope="row">{{event.members.count}}</th>
+                    <td>{{event.starting_time}}</td>
+                    <td>{{event.is_confirmed}}</td>
+                    <td>
+                        {% if not org and not cox and not coach %}
+                            {% if event|couldJoinIn:rower %}
+                            <a href="/organizer/outing/{{event.id}}/?action=join&typ=row" class="btn btn-success">Join</a>
+                            {% elif event|isRowIn:rower %}
+                            <a href="/organizer/outing/{{event.id}}/?action=leave&typ=row" class="btn btn-danger">OptOut</a>
+                            {% endif %}
+                        {% elif cox %}
+                            {% if event|couldJoinIn:rower and not event.cox %}
+                            <a href="/organizer/outing/{{event.id}}/?action=join&typ=cox" class="btn btn-success">Cox</a>
+                            {% elif event|isCoxIn:rower %}
+                            <a href="/organizer/outing/{{event.id}}/?action=leave&typ=cox" class="btn btn-danger">OptOut</a>
+                            {% endif %}
+                        {% elif coach %}
+                            {% if event|couldJoinIn:rower and not event.coaches%}
+                            <a href="/organizer/outing/{{event.id}}/?action=join&typ=coach" class="btn btn-success">Coach</a>
+                            {% elif event|isCoachIn:rower %}
+                            <a href="/organizer/outing/{{event.id}}/?action=leave&typ=coach" class="btn btn-danger">OptOut</a>
+                            {% endif %}
+                        {% elif org %}
+                            {% if not event.is_confirmed %}
+                            <a href="/organizer/outing/{{event.id}}/confirm/" class="btn btn-success">Confirm</a>
+                            {% elif event.is_confirmed and not event.is_canceled %}
+                            <a href="" class="btn btn-danger">Cancel</a>
+                            {% else %}
+                            <a href="" class="btn btn-warning">Reconfirm</a>
+                            {% endif %}
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a class="btn btn-default" href="/organizer/crew/{{crew.name}}" role="button">Go to Crew</a>
+        </div>
+        {% endfor %}
+    </div>

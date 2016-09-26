@@ -8,12 +8,13 @@ from django.contrib.auth.models import Group, User
 
 
 
-from .models import Rower
+from .models import Rower, Crew, Event
 from .forms import UserForm, OutingForm
-from .user import construct_rower
+from .constructObjects import construct_rower, construct_Outing
 # Create your views here.
 
 import logging
+
 
 def login_user(request):
     logout(request)
@@ -50,9 +51,10 @@ def createuser(request):
     if request.POST:
         form = UserForm(request.POST)
         if form.is_valid():
-            construct_rower(request, form)
-            messages.success(request, "Your user hase been created. Please Wait for an Administror to accept your account.")
-            return redirect('organizer/login')
+            if construct_rower(request, form):
+                messages.info(request, "Your new User (" + form.cleaned_data[
+                    'username'] + ") has been created! Please wait until a Administrator aproves the new user.")
+                return redirect('/organizer/login')
         else:
             messages.error(request, form.non_field_errors())
     else:
@@ -67,30 +69,88 @@ def createuser(request):
 
 @login_required(login_url='/organizer/login/')
 def createouting(request):
+    rower = Rower.objects.get(user=request.user)
     if request.POST:
         form = OutingForm(request.POST)
         if form.is_valid():
+            construct_Outing(request, form)
             messages.success(request, "The Outing has been created")
-            response = redirect('organizer/main')
-            return
+            return redirect('/organizer/main')
         else:
             messages.error(request, form.non_field_errors())
     else:
-        form = OutingForm()
-
+        if rower.organizes_crew.all():
+            form = OutingForm()
+        else:
+            messages.warning(request, "No Crew to Organize!")
+            return redirect('/organizer/main')
     return render(request, 'organizer/create.html',
                   {'boatclub':{'name':'Champion on the Thames'},
                    'form':form,
+                   'rower':rower,
                    'formname':"Outing",
                    'submit_name':"Create",
-                   'post_url':"/organizer/createouting"})
+                   'post_url':"/organizer/createouting/",
+                   'bar': True})
+
+@login_required(login_url='/organizer/login/')
+def changeOuting(request):
+
+
+    messages.success(request, "Change to the Outing was successful.")
+    return redirect('/organizer/main')
+
+@login_required(login_url='/organizer/login/')
+def outing(request, eventid=None):
+    action = request.GET.get('action')
+    typ = request.GET.get('typ')
+    event = Event.objects.get(id=eventid)
+    rower = Rower.objects.get(user=request.user)
+    if event is None:
+        messages.error(request, "Outing not Found!")
+        return redirect('/organizer/main/')
+
+    if typ == 'row':
+        if action == 'join':
+            event.members.add(Rower.objects.get(user=request.user))
+        elif action == 'leave' and event.members.filter(user=request.user).count() >0:
+            event.members.remove(rower)
+    if typ == 'cox' :
+        if action == 'join'and event.cox is None:
+            event.cox = (rower)
+        elif action == 'leave' and event.cox is not None and event.cox == rower:
+            print("OUT")
+            event.cox = None
+            rower.save()
+    if typ == 'coach' :
+        if action == 'join'and event.coaches is None:
+            event.coaches = (rower)
+        elif action == 'leave' and event.coaches is not None and event.coaches == rower:
+            print("OUT")
+            event.coaches = None
+            rower.save()
+
+    event.save()
+    if action == 'join':
+        messages.success(request, 'Joint Outing')
+    elif action == 'leave':
+        messages.error(request, 'Oped Out')
+    return redirect('/organizer/main/')
 
 @login_required(login_url='/organizer/login/')
 def main(request):
     rower = get_object_or_404(Rower, pk=request.user)
     crews = rower.member_of_crew.all()
-
+    coxed_crews = None
+    coach_crews = None
+    if rower.is_coach:
+        coxed_crews = Crew.objects.all()
+    if rower.is_cox:
+        coach_crews = Crew.objects.all()
     return render(request, 'organizer/main.html', {
             'rower': rower,
             'crews': crews,
+            'coxed_crews' : coxed_crews,
+            'coach_crews': coach_crews,
+            'organized_crews' : rower.organizes_crew.all(),
         })

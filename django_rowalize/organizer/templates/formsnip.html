@@ -1,9 +1,16 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+{# Load the tag library #}
+{% load bootstrap3 %}
+{# Load CSS and JavaScript #}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+{{ form.media }}
+
 <div class="container-fluid">
     <form action={{post_url}} method="POST" role="form" class="form-horizontal">
         {% csrf_token %}
-        <table>
-            {{ form.as_table }}
-        </table>
+        {% bootstrap_form form layout='horizontal' %}
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-default">{{ submit }}</button>
@@ -11,3 +18,4 @@
         </div>
     </form>
 </div>
+

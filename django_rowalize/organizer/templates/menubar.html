@@ -4,13 +4,25 @@
             <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button>
         <a class="navbar-brand" style="background-color:orange;color:black;">Champs Rowing</a>
     </div>
+    {% if rower.user.is_authenticated %}
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7"style="background-color:black; color:orange;">
         <ul class="nav navbar-nav" style="color:orange;">
             <li class="active"><a href="/organizer/main/" style="color:orange;">Home</a></li>
-            <li><a href="/organizer/logout/"style="color:orange;">LogOut</a></li>
+            {% if rower.organizes_crew.all %}
+            <li class="active"><a href="/organizer/createouting/" style="color:orange;">Create Outing</a></li>
+            {% endif %}
         </ul>
         <ul class="nav navbar-nav navbar-right" style="color:orange;">
-            <li><a href="/organizer/logout/"style="color:orange;background-color:black;"> Logged in as {{ rower.user }}</a></li>
+            <li><a href="/organizer/logout/"style="color:orange;">LogOut</a></li>
+            <li><a href=""style="color:orange;background-color:black;"> Logged in as {{ rower }}</a></li>
         </ul>
     </div>
+    {% else %}
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7"style="background-color:black; color:orange;">
+        <ul class="nav navbar-nav" style="color:orange;">
+            <li class="active"><a href="/organizer/login/" style="color:orange;">Login</a></li>
+            <li class="active"><a href="/organizer/createuser/" style="color:orange;">Create User</a></li>
+        </ul>
+    </div>
+    {% endif %}
 
