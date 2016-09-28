@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^createuser/$', views.createuser),
     url(r'^createouting/$', views.createouting),
     url(r'^changeouting/$', views.changeOuting),
-    url(r'^outing/(?P<eventid>\d+)/$', views.outing)
-    # url(r'^', views.main)
+    url(r'^outing/(?P<eventid>\d+)/$', views.outing),
+    url(r'^', views.main)
 ]
 

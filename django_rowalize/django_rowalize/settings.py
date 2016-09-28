@@ -155,5 +155,5 @@ EMAIL_PORT = 587
 
 # Optional SMTP authentication information for EMAIL_HOST.
 EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_PASSWORD = 'testfoo'
 EMAIL_USE_TLS = True
