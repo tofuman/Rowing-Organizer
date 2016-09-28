@@ -148,12 +148,12 @@ STATICFILES_DIRS = [
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Host for sending e-mail.
-EMAIL_HOST = ''
+EMAIL_HOST = 'smtp.1blu.de'
 
 # Port for sending e-mail.
 EMAIL_PORT = 587
 
 # Optional SMTP authentication information for EMAIL_HOST.
-EMAIL_HOST_USER = ''
+EMAIL_HOST_USER = 'd170278_0-test'
 EMAIL_HOST_PASSWORD = 'testfoo'
 EMAIL_USE_TLS = True

@@ -11,8 +11,9 @@ def construct_rower(request, form):
                                         form.cleaned_data['email'],
                                         form.cleaned_data['password'],
                                         first_name=form.cleaned_data['first_name'],
-                                        last_name=form.cleaned_data['sir_name'],
-                                        is_active=False)
+                                        last_name=form.cleaned_data['sir_name'])
+        user.is_active= False
+        user.save()
         phone_number = form.cleaned_data['phone_number']
         preferred_side = form.cleaned_data['preferred_side']
         gender = form.cleaned_data['gender']
