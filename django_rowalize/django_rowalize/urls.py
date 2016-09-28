@@ -21,7 +21,7 @@ from django.conf import settings
 urlpatterns = [
     url(r'^organizer/', include('organizer.urls')),
     url(r'^admin/', admin.site.urls),
-    url(r'^/', include('organizer.urls')),
+    url(r'^$', include('organizer.urls')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()
