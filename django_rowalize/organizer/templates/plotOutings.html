@@ -1,15 +1,19 @@
 {% load templateFilter %}
 
+{% for crew in crews %}
 <div class="row">
-        {% for crew in crews %}
-        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
             <h2>{{ crew.name }} </h2>
             <table class="table table-striped">
                 <thead>
                 <tr>
-                    <th>RSVPs</th>
                     <th>Time</th>
-                    <th>Confirmed</th>
+                    <th>Bowside</th>
+                    <th>Strokeside</th>
+                    <th>Combined</th>
+                    <th>Cox</th>
+                    <th>Coach</th>
                     <th>Action</th>
                 </tr>
                 </thead>
@@ -22,13 +26,30 @@
                     {% else %}
                 <tr>
                     {% endif %}
-                    <th scope="row">{{event.members.count}}</th>
-                    <td>{{event.starting_time}}</td>
-                    <td>{{event.is_confirmed}}</td>
+                    <th scope="row">{{event.starting_time}}</th>
+                    <td>{{event.strokeside.count}}</td>
+                    <td>{{event.bowside.count}}</td>
+                    <td>{{event.members.count}}</td>
+                    <td>
+                        {% if event.cox %}
+                        {{event.cox.fullname}}
+                        {% else %}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if event.coaches %}
+                        {{event.coaches.fullname}}
+                        {% else %}
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                        {% endif %}
+                    </td>
+
                     <td>
                         {% if not org and not cox and not coach %}
                             {% if event|couldJoinIn:rower %}
-                            <a href="/organizer/outing/{{event.id}}/?action=join&typ=row" class="btn btn-success">Join</a>
+                            <a href="/organizer/outing/{{event.id}}/?action=stroke&typ=row" class="btn btn-success">Stroke</a>
+                            <a href="/organizer/outing/{{event.id}}/?action=bow&typ=row" class="btn btn-success">Bow</a>
                             {% elif event|isRowIn:rower %}
                             <a href="/organizer/outing/{{event.id}}/?action=leave&typ=row" class="btn btn-danger">OptOut</a>
                             {% endif %}
@@ -46,11 +67,11 @@
                             {% endif %}
                         {% elif org %}
                             {% if not event.is_confirmed %}
-                            <a href="/organizer/outing/{{event.id}}/confirm/" class="btn btn-success">Confirm</a>
+                            <a href="/organizer/outing/{{event.id}}/?action=confirm&typ=organize" class="btn btn-success">Confirm</a>
                             {% elif event.is_confirmed and not event.is_canceled %}
-                            <a href="" class="btn btn-danger">Cancel</a>
+                            <a href="/organizer/outing/{{event.id}}/?action=cancel&typ=organize" class="btn btn-danger">Cancel</a>
                             {% else %}
-                            <a href="" class="btn btn-warning">Reconfirm</a>
+                            <a href="/organizer/outing/{{event.id}}/?action=confirm&typ=organize" class="btn btn-warning">Reconfirm</a>
                             {% endif %}
                         {% endif %}
 
@@ -62,5 +83,5 @@
             </table>
             <a class="btn btn-default" href="/organizer/crew/{{crew.name}}" role="button">Go to Crew</a>
         </div>
-        {% endfor %}
     </div>
+{% endfor %}

@@ -1,34 +1,25 @@
 {% extends "website-base.html" %}
 
 {% block bar %}
-{% include "menubar.html" with rower=rower crews=crews %}
+{% include "menubar.html" with rower=rower crews=crews requestemail=requestemail %}
 {% endblock %}
-<script>
-    function call_counter(url, pk) {
-        window.open(url);
-        $.get('YOUR_VIEW_HERE/'+pk+'/', function (data) {
-            alert("counter updated!");
-        });
-    }
-</script>
-
 
 {% block main %}
 <div class="container-fluid">
     {% if crews %}
         <div class="page-header">
-            <h1>Rowing<small>Outings of Crews you row in.</small></h1>
+            <h1>Rowing<small> Outings of Crews you row in.</small></h1>
         </div>
         {% include "plotOutings.html" with rower=rower crews=crews cox=False coach=False org=False %}
     {% endif %}
 
-    {% if rower.is_cox %}
+    {% if coxed_crews %}
         <div class="page-header">
             <h1>Coxing<small> Outings that you are Coxing or could Cox.</small></h1>
         </div>
         {% include "plotOutings.html" with rower=rower crews=coxed_crews cox=True coach=False org=False %}
     {% endif %}
-    {% if rower.is_coach %}
+    {% if coach_crews %}
         <div class="page-header">
             <h1>Coaching<small> Outings that you are Coaching or could Coach.</small></h1>
         </div>
@@ -36,7 +27,7 @@
     {% endif %}
     {% if organized_crews %}
         <div class="page-header">
-            <h1>Organizing<small>Outings of crews that you manage.</small></h1>
+            <h1>Organizing<small> Outings of crews that you manage.</small></h1>
         </div>
         {% include "plotOutings.html" with rower=rower crews=organized_crews cox=False coach=False org=True %}
     {% endif %}

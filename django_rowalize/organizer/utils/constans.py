@@ -1,1 +1,5 @@
-
+BoatClubName = "Best Club Ever!"
+NoReplyEmail = "no-reply@foo.bar"
+AdminEmail = "admin@foo.bar"
+RequestEmail = "rowingapp-request@tofuman.org"
+EmailPrefix = "[Rowing Organizer]"

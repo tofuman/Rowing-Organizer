@@ -1,19 +1,20 @@
-from django.http import HttpResponseRedirect, HttpResponse
-from django.contrib.auth import authenticate, login, logout, get_user
-from django.shortcuts import get_object_or_404, render, render_to_response, redirect
-from django.contrib.auth.decorators import login_required
-from django.template import RequestContext
 from django.contrib import messages
-from django.contrib.auth.models import Group, User
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, render, render_to_response, redirect
+from django.template import RequestContext
 
-
-
-from .models import Rower, Crew, Event
+from organizer.utils.constructObjects import construct_rower, construct_Outing
 from .forms import UserForm, OutingForm
-from .constructObjects import construct_rower, construct_Outing
+from .models import Rower, Crew, Event
+from .utils.constans import RequestEmail
+from .utils.helperMethods import createDefaultRenderArguments
+from .rowingHelper.outing import modify
+
 # Create your views here.
 
-import logging
 
 
 def login_user(request):
@@ -59,39 +60,40 @@ def createuser(request):
             messages.error(request, form.non_field_errors())
     else:
         form = UserForm()
-
+    templateargs = createDefaultRenderArguments(request)
+    templateargs['form']= form
     return render(request, 'organizer/create.html',
-                  {'boatclub':{'name':'YOUR BOAT CLUB'},
-                   'form':form,
-                   'formname':"User",
-                   'submit_name':"Register",
-                   'post_url':"/organizer/createuser/"})
+                  templateargs)
 
 @login_required(login_url='/organizer/login/')
 def createouting(request):
     rower = Rower.objects.get(user=request.user)
     if request.POST:
+        print("POST")
         form = OutingForm(request.POST)
         if form.is_valid():
+            print("VALID")
             construct_Outing(request, form)
             messages.success(request, "The Outing has been created")
-            return redirect('/organizer/main')
+            return redirect('/organizer/main/')
         else:
             messages.error(request, form.non_field_errors())
     else:
+        print("GET")
         if rower.organizes_crew.all():
             form = OutingForm()
         else:
             messages.warning(request, "No Crew to Organize!")
-            return redirect('/organizer/main')
+            return redirect('/organizer/main/')
+    templateargs = createDefaultRenderArguments(request, rower)
+    templateargs['form'] = form
+    templateargs['formname']= "Outing"
+    templateargs['submit_name'] = "Create"
+    templateargs['post_url'] = "/organizer/createouting"
+    templateargs['bar'] = True
+    templateargs['requestemail'] = RequestEmail
     return render(request, 'organizer/create.html',
-                  {'boatclub':{'name':'YOUR BOAT CLUB'},
-                   'form':form,
-                   'rower':rower,
-                   'formname':"Outing",
-                   'submit_name':"Create",
-                   'post_url':"/organizer/createouting/",
-                   'bar': True})
+                  templateargs)
 
 @login_required(login_url='/organizer/login/')
 def changeOuting(request):
@@ -102,55 +104,26 @@ def changeOuting(request):
 
 @login_required(login_url='/organizer/login/')
 def outing(request, eventid=None):
-    action = request.GET.get('action')
-    typ = request.GET.get('typ')
     event = Event.objects.get(id=eventid)
-    rower = Rower.objects.get(user=request.user)
     if event is None:
         messages.error(request, "Outing not Found!")
         return redirect('/organizer/main/')
-
-    if typ == 'row':
-        if action == 'join':
-            event.members.add(Rower.objects.get(user=request.user))
-        elif action == 'leave' and event.members.filter(user=request.user).count() >0:
-            event.members.remove(rower)
-    if typ == 'cox' :
-        if action == 'join'and event.cox is None:
-            event.cox = (rower)
-        elif action == 'leave' and event.cox is not None and event.cox == rower:
-            print("OUT")
-            event.cox = None
-            rower.save()
-    if typ == 'coach' :
-        if action == 'join'and event.coaches is None:
-            event.coaches = (rower)
-        elif action == 'leave' and event.coaches is not None and event.coaches == rower:
-            print("OUT")
-            event.coaches = None
-            rower.save()
-
-    event.save()
-    if action == 'join':
-        messages.success(request, 'Joint Outing')
-    elif action == 'leave':
-        messages.error(request, 'Oped Out')
-    return redirect('/organizer/main/')
+    return modify(request, event)
 
 @login_required(login_url='/organizer/login/')
-def main(request):
+def main(request, position='row'):
     rower = get_object_or_404(Rower, pk=request.user)
-    crews = rower.member_of_crew.all()
-    coxed_crews = None
-    coach_crews = None
-    if rower.is_coach:
-        coxed_crews = Crew.objects.all()
-    if rower.is_cox:
-        coach_crews = Crew.objects.all()
-    return render(request, 'organizer/main.html', {
-            'rower': rower,
-            'crews': crews,
-            'coxed_crews' : coxed_crews,
-            'coach_crews': coach_crews,
-            'organized_crews' : rower.organizes_crew.all(),
-        })
+    if position == 'cox' and rower.is_cox:
+        templateargs = createDefaultRenderArguments(request, rower)
+        templateargs['coxed_crews'] = Crew.objects.all()
+    elif position == 'coach' and rower.is_coach:
+        templateargs = createDefaultRenderArguments(request, rower)
+        templateargs['coach_crews'] = Crew.objects.all()
+    elif position == 'org' and rower.organizes_crew.all():
+        templateargs = createDefaultRenderArguments(request, rower)
+        templateargs['organized_crews'] = rower.organizes_crew.all()
+    else:
+        templateargs = createDefaultRenderArguments(request, rower, rower.member_of_crew.all())
+
+    templateargs['requestemail'] = RequestEmail
+    return render(request, 'organizer/main.html', templateargs)

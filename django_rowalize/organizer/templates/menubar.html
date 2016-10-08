@@ -1,27 +1,44 @@
+
     <div class="navbar-header">
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
                 data-target="#bs-example-navbar-collapse-7" aria-expanded="false"><span class="sr-only">Toggle navigation</span>
             <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span></button>
-        <a class="navbar-brand" style="background-color:orange;color:black;">Champs Rowing</a>
+        <a class="navbar-brand buttonStyleInv" >Champs Rowing</a>
     </div>
     {% if rower.user.is_authenticated %}
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7"style="background-color:black; color:orange;">
-        <ul class="nav navbar-nav" style="color:orange;">
-            <li class="active"><a href="/organizer/main/" style="color:orange;">Home</a></li>
-            {% if rower.organizes_crew.all %}
-            <li class="active"><a href="/organizer/createouting/" style="color:orange;">Create Outing</a></li>
+    <div class="collapse navbar-collapse" id="nav-bar" style="background-color:black; color:orange;">
+        <ul class="nav navbar-nav buttonStyle">
+            <li class="active buttonStyle"><a href="/organizer/main/row" class="buttonStyle">Row</a></li>
+            {% if rower.is_cox %}
+            <li class="active  buttonStyle"><a href="/organizer/main/cox" class="buttonStyle">Cox</a></li>
             {% endif %}
+            {% if rower.is_coach %}
+            <li class="active buttonStyle"><a href="/organizer/main/coach" class="buttonStyle">Coach</a></li>
+            {% endif %}
+            {% if rower.organizes_crew.all %}
+            <li class="dropdown buttonStyle">
+                <a href="#" id="dLabel"  class="dropdown-toggle buttonStyle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" style="color:orange;">Organize <span class="caret"></span></a>
+                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                    <li><a href="/organizer/createouting" style="color:black;">Create an Outing</a></li>
+                    <li><a href="/organizer/main/org" style="color:black;">View Outings</a></li>
+                    <li role="separator" class="divider" style="color:black;"></li>
+                    <li><a href="#" style="color:black;">Create Crew</a></li>
+                </ul>
+            </li>
+            {% endif %}
+
         </ul>
-        <ul class="nav navbar-nav navbar-right" style="color:orange;">
-            <li><a href="/organizer/logout/"style="color:orange;">LogOut</a></li>
-            <li><a href=""style="color:orange;background-color:black;"> Logged in as {{ rower }}</a></li>
+        <ul class="nav navbar-nav navbar-right buttonStyle" style="color:orange;">
+            <li><a href="mailto:{{ requestemail }}Subject=Feedback" class="buttonStyle">Send us Feedback</a> </li>
+            <li><a href="/organizer/logout/" class="buttonStyle">LogOut</a></li>
+            <li><a href="" class="buttonStyle"> Logged in as {{ rower }}</a></li>
         </ul>
     </div>
     {% else %}
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7"style="background-color:black; color:orange;">
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-7" style="background-color:black; color:orange;">
         <ul class="nav navbar-nav" style="color:orange;">
-            <li class="active"><a href="/organizer/login/" style="color:orange;">Login</a></li>
-            <li class="active"><a href="/organizer/createuser/" style="color:orange;">Create User</a></li>
+            <li class="active buttonStyle"><a href="/organizer/login/" class="buttonStyle">Login</a></li>
+            <li class="active buttonStyle"><a href="/organizer/createuser/" class="buttonStyle">Create User</a></li>
         </ul>
     </div>
     {% endif %}

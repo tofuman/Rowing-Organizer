@@ -1,7 +1,10 @@
-from .models import User,Rower, Event, Crew
+from organizer.models import User,Rower, Event, Crew
 from django.db.utils import IntegrityError
 from django.contrib import messages
 from django.core.mail import send_mail
+
+from organizer.utils.constans import NoReplyEmail, AdminEmail, RequestEmail
+from organizer.utils.email import Email
 
 def construct_rower(request, form):
     user = None
@@ -11,9 +14,8 @@ def construct_rower(request, form):
                                         form.cleaned_data['email'],
                                         form.cleaned_data['password'],
                                         first_name=form.cleaned_data['first_name'],
-                                        last_name=form.cleaned_data['sir_name'])
-        user.is_active= False
-        user.save()
+                                        last_name=form.cleaned_data['sir_name'],
+                                        is_active=False)
         phone_number = form.cleaned_data['phone_number']
         preferred_side = form.cleaned_data['preferred_side']
         gender = form.cleaned_data['gender']
@@ -22,11 +24,9 @@ def construct_rower(request, form):
         rower = Rower(user=user, phone_number=phone_number, preferred_side=preferred_side, gender=gender, is_coach=is_coach,
                       is_cox=is_cox)
         try:
-            send_mail('[Rowing Organizer]Rowing Organizer Account Creation', 'Thank you for Creating a Account with us'+ form.cleaned_data['username']+'.\n'+\
-                                 'Once your account has been activated by an admin you will be able to log in.\n\nKind Regards\nThe Team',
-                                 'no-reply@rowing.org',
-                                 [form.cleaned_data['email']],
-                                 fail_silently=False)
+            email = Email([form.cleaned_data['email']], 'Rowing Organizer Account Creation')
+            email.send('Thank you for Creating a Account with us '+ form.cleaned_data['username']+'.\n'+\
+                                 'Once your account has been activated by an admin you will be able to log in.\n\nKind Regards\nThe Team',)
         except:
             messages.error(request, "Problem Sending Email. Make sure your email is correct. If error persist contact a admin.")
             user.delete()

@@ -80,6 +80,8 @@ class OutingForm(forms.ModelForm):
             print(self.cleaned_data.get('starting_time').split('+')[0])
 
             raise forms.ValidationError("Start or End time was left empty")
+        if starting_time is None or ending_time is None:
+            raise forms.ValidationError("Please give start and end times!")
         if datetime.now(get_current_timezone()) >= starting_time or datetime.now(get_current_timezone())  >= ending_time:
             raise forms.ValidationError("Time is in the past!")
         if starting_time > ending_time:

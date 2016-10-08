@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import Group, User
-from .utils.enums import GENDER_CHOICES, BOAT_CHOICES, LOCATION_CHOICES, SIDE_CHOICES
-
+from .utils.enums import GENDER_CHOICES, BOAT_CHOICES, LOCATION_CHOICES, SIDE_CHOICES, SIDE_BOW, SIDE_STROKE
+import datetime
+from django.utils import timezone
 
 class Rower(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
@@ -11,9 +12,12 @@ class Rower(models.Model):
     is_cox = models.BooleanField(default=False)
     is_coach = models.BooleanField(default=False)
 
+    def fullname(self):
+        return self.user.first_name + " " + self.user.last_name
+
 
     def __str__(self):
-        return self.user.username
+        return self.user.first_name + " " + self.user.last_name
 
 
 class Crew(Group):
@@ -23,8 +27,15 @@ class Crew(Group):
     organizers = models.ManyToManyField(Rower, related_name='organizes_crew')
 
     def getEvents(self):
-        return self.event_set.all().order_by('starting_time')
+        now = timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone())
+        return self.event_set.filter(starting_time__gte = now).order_by('starting_time')
 
+    def getOrganizerMail(self):
+        addr = []
+        for organizer in self.organizers.all():
+            addr.append(organizer.user.email)
+            print(organizer.user.email)
+        return addr
 
     def __str__(self):
         return self.name
@@ -76,17 +87,35 @@ class Event(models.Model):
                                 limit_choices_to={'is_coach':True}, null=True, blank=True,related_name='coaching_in')
     crew = models.ForeignKey(Crew, null=True, blank=True)
     members = models.ManyToManyField(Rower, related_name='rowing_in')
+    strokeside = models.ManyToManyField(Rower, related_name='strokeside_in')
+    bowside = models.ManyToManyField(Rower, related_name='bowside_in')
     oars = models.ForeignKey(Oars, null=True, blank=True)
     coxBox = models.ForeignKey(CoxBox, null=True, blank=True)
     isRace = models.BooleanField(default=False)
     is_confirmed = models.BooleanField(default=False)
     is_canceled = models.BooleanField(default=False)
 
+    def countBowside(self):
+        return self.members.filter(preferred_side=SIDE_BOW).count()
+
+    def countStroke(self):
+        return self.members.filter(preferred_side=SIDE_STROKE).count()
+
+
     def shouldJoinRowing(self, rower):
         if rower in self.members.filter(rower=rower).exists():
             return "DropOut"
         else:
             return "Join"
+
+    def in_future(self):
+        return True
+        if self.ending_time > timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone()):
+            return True
+        else:
+            print(self.ending_time)
+            print(timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone()))
+            return False
 
     def __str__(self):
         if self.crew is not None:
