@@ -66,7 +66,7 @@
                             <a href="/organizer/outing/{{event.id}}/?action=leave&typ=coach" class="btn btn-danger">OptOut</a>
                             {% endif %}
                         {% elif org %}
-                            {% if not event.is_confirmed %}
+                            {% if not event.is_confirmed and not event.is_canceled%}
                             <a href="/organizer/outing/{{event.id}}/?action=confirm&typ=organize" class="btn btn-success">Confirm</a>
                             {% elif event.is_confirmed and not event.is_canceled %}
                             <a href="/organizer/outing/{{event.id}}/?action=cancel&typ=organize" class="btn btn-danger">Cancel</a>

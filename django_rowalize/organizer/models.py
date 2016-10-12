@@ -11,6 +11,7 @@ class Rower(models.Model):
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     is_cox = models.BooleanField(default=False)
     is_coach = models.BooleanField(default=False)
+    wants_organizer_mail = models.BooleanField(default=False)
 
     def fullname(self):
         return self.user.first_name + " " + self.user.last_name
@@ -33,8 +34,8 @@ class Crew(Group):
     def getOrganizerMail(self):
         addr = []
         for organizer in self.organizers.all():
-            addr.append(organizer.user.email)
-            print(organizer.user.email)
+            if organizer.wants_organizer_mail:
+                addr.append(organizer.user.email)
         return addr
 
     def __str__(self):
@@ -95,6 +96,16 @@ class Event(models.Model):
     is_confirmed = models.BooleanField(default=False)
     is_canceled = models.BooleanField(default=False)
 
+    def getJoiniesMail(self):
+        mail = []
+        for member in self.members.all():
+            mail.append(member.user.email)
+        if self.cox is not None:
+            mail.append(self.cox.user.email)
+        if self.coaches is not None:
+            mail.append(self.coaches.user.email)
+        return mail
+
     def countBowside(self):
         return self.members.filter(preferred_side=SIDE_BOW).count()
 
@@ -109,7 +120,6 @@ class Event(models.Model):
             return "Join"
 
     def in_future(self):
-        return True
         if self.ending_time > timezone.make_aware(datetime.datetime.now(), timezone.get_default_timezone()):
             return True
         else:
