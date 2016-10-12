@@ -1,0 +1,17 @@
+.buttonStyle {
+    color: orange;
+    background-color:black;
+
+}
+
+.buttonStyleInv {
+    color: black;
+    background-color:orange;
+
+}
+
+.buttonStyle:hover, .buttonStyle:focus, .buttonStyle:active {
+    background: orange !important;
+    color: black !important;
+}
+
