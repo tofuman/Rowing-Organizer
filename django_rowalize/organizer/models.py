@@ -16,7 +16,6 @@ class Rower(models.Model):
     def fullname(self):
         return self.user.first_name + " " + self.user.last_name
 
-
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
 

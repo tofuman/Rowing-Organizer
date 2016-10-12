@@ -5,7 +5,8 @@
 {# Load CSS and JavaScript #}
 {% bootstrap_css %}
 {% bootstrap_javascript %}
-<link rel="stylesheet" type="text/css" href="/static/css/bar.css">
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static "/static/css/bar.css" %}">
 
     <head>
         <title> Champs Rowing</title>
