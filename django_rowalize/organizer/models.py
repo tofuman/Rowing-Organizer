@@ -55,7 +55,7 @@ class Boat(models.Model):
         return self.name
 
 
-class Oars(models.Model):
+class Blades(models.Model):
     name = models.CharField(max_length=30, unique=True, primary_key=True)
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     number = models.PositiveSmallIntegerField(verbose_name="Number of Oars")
@@ -89,7 +89,7 @@ class Event(models.Model):
     members = models.ManyToManyField(Rower, related_name='rowing_in')
     strokeside = models.ManyToManyField(Rower, related_name='strokeside_in')
     bowside = models.ManyToManyField(Rower, related_name='bowside_in')
-    oars = models.ForeignKey(Oars, null=True, blank=True)
+    blades = models.ForeignKey(Blades, null=True, blank=True)
     coxBox = models.ForeignKey(CoxBox, null=True, blank=True)
     isRace = models.BooleanField(default=False)
     is_confirmed = models.BooleanField(default=False)

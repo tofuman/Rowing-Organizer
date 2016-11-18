@@ -50,7 +50,7 @@ def construct_Outing(request, form):
             ending_time = form.cleaned_data['ending_time'],
             boat = form.cleaned_data['boat'],
             crew = form.cleaned_data['crew'],
-            oars = form.cleaned_data['oars'],
+            oars = form.cleaned_data['blades'],
             coxBox = form.cleaned_data['coxBox'],
             isRace = form.cleaned_data['isRace'],
             is_confirmed = form.cleaned_data['is_confirmed']

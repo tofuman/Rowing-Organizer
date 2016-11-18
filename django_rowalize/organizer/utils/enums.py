@@ -33,8 +33,8 @@ SIDE_BOW_STROKE = 'bs'
 SIDE_STROKE_BOW = 'sb'
 SIDE_CHOICES = (
     (SIDE_BOW,"Bowside Only"),
-    (SIDE_STROKE, "Strokeside Only"),
-    (SIDE_UNDECIDED, "No Preference yet"),
     (SIDE_BOW_STROKE, "Mainly Bowside"),
-    (SIDE_STROKE_BOW, "Mainly Strokeside")
+    (SIDE_UNDECIDED, "No Preference"),
+    (SIDE_STROKE_BOW, "Mainly Strokeside"),
+    (SIDE_STROKE, "Strokeside Only")
 )
